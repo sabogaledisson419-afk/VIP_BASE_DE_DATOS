@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Cambiar esta URL a tu endpoint en Vercel cuando esté desplegado
-  const API_URL = 'http://localhost:3000/api/vehiculos';
+  const API_URL = 'https://vipbasedatos.vercel.app/api/vehiculos';
 
   const form = document.getElementById('vehicle-form');
   const fotoInput = document.getElementById('foto');

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Reemplazar con la URL otorgada por Vercel
-  const API_URL = 'https://tu-proyecto.vercel.app/api/vehiculos';
+  // Cambiar esta URL a tu endpoint en Vercel cuando esté desplegado
+  const API_URL = 'http://localhost:3000/api/vehiculos';
 
   const form = document.getElementById('vehicle-form');
   const fotoInput = document.getElementById('foto');
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!response.ok) throw new Error('Error al registrar');
 
-      alert('Vehículo registrado correctamente en la base de datos.');
+      alert('Vehículo registrado correctamente en Supabase.');
 
       if (isAdmin) {
         loadVehiclesFromAPI();
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (error) {
       console.error(error);
-      alert('Ocurrió un error al enviar los datos a la base de datos.');
+      alert('Ocurrió un error al enviar los datos a Supabase.');
     }
   });
 
@@ -157,6 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getSoatStatus(fechaSoatStr) {
+    if (!fechaSoatStr) return { text: 'Sin fecha', class: '' };
+
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 

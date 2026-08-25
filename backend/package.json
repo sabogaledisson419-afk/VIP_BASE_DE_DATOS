@@ -1,15 +1,15 @@
 {
   "name": "backend-registro-vehiculos",
   "version": "1.0.0",
-  "description": "API REST Serverless para registro de vehiculos",
+  "description": "API REST Serverless con Supabase",
   "main": "api/index.js",
   "scripts": {
     "start": "node api/index.js"
   },
   "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^16.6.1",
-    "express": "^4.22.2",
-    "mysql2": "^3.9.2"
+    "@supabase/supabase-js": "^2.39.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3"
   }
 }

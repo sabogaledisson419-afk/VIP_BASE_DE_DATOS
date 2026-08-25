@@ -16,7 +16,7 @@
       <button id="auth-btn" class="auth-btn">Acceso Administrador</button>
     </header>
 
-    <!-- Tarjeta del Formulario (Visible para todos) -->
+    <!-- Tarjeta del Formulario -->
     <div class="card-container">
       <div class="card-header">
         <h2>Registro de Vehículo</h2>
@@ -25,7 +25,6 @@
 
       <form id="vehicle-form" class="vehicle-form">
         
-        <!-- Placa del Vehículo -->
         <div class="form-group">
           <label for="placa">Placa del Vehículo</label>
           <input 
@@ -38,7 +37,6 @@
             style="text-transform: uppercase;">
         </div>
 
-        <!-- Nombre del Conductor -->
         <div class="form-group">
           <label for="conductor">Nombre del Conductor</label>
           <input 
@@ -49,7 +47,6 @@
             required>
         </div>
 
-        <!-- Número Telefónico -->
         <div class="form-group">
           <label for="telefono">Número Telefónico</label>
           <input 
@@ -62,7 +59,6 @@
             required>
         </div>
 
-        <!-- Fecha Vencimiento SOAT -->
         <div class="form-group">
           <label for="fecha-soat">Fecha de Vencimiento SOAT</label>
           <input 
@@ -72,7 +68,6 @@
             required>
         </div>
 
-        <!-- Subir Foto del Vehículo -->
         <div class="form-group">
           <label for="foto">Foto del Vehículo</label>
           <div class="file-upload-box">
@@ -90,13 +85,12 @@
           </div>
         </div>
 
-        <!-- Botón de Envío -->
         <button type="submit" class="submit-btn">Guardar Registro</button>
 
       </form>
     </div>
 
-    <!-- Sección de la Tabla de Registros (Solo visible para Administrador) -->
+    <!-- Tabla para Administrador -->
     <div id="table-container" class="table-container hidden">
       <div class="table-header">
         <h3>Vehículos Registrados (Vista Administrador)</h3>
@@ -115,7 +109,6 @@
             </tr>
           </thead>
           <tbody id="table-body">
-            <!-- Se llena dinámicamente con JavaScript -->
           </tbody>
         </table>
       </div>

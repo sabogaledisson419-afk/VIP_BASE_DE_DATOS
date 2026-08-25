@@ -1,6 +1,6 @@
 const express = require('express');
-const mysql = require('mysql2/promise');
 const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const app = express();
@@ -8,35 +8,34 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
-  ssl: { rejectUnauthorized: false },
-  waitForConnections: true,
-  connectionLimit: 10
-});
+// Inicializar cliente de Supabase
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // GET: Obtener todos los vehículos
 app.get('/api/vehiculos', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM vehiculos ORDER BY id DESC');
-    
-    const vehiculos = rows.map(item => ({
+    const { data, error } = await supabase
+      .from('vehiculos')
+      .select('*')
+      .order('id', { ascending: false });
+
+    if (error) throw error;
+
+    const vehiculos = data.map(item => ({
       id: item.id,
       placa: item.placa,
       conductor: item.conductor,
       telefono: item.telefono,
-      fechaSoat: item.fecha_soat ? item.fecha_soat.toISOString().split('T')[0] : '',
+      fechaSoat: item.fecha_soat,
       foto: item.foto
     }));
 
     res.json(vehiculos);
   } catch (error) {
-    console.error('Error GET:', error);
-    res.status(500).json({ error: 'Error al consultar la base de datos' });
+    console.error('Error GET Supabase:', error);
+    res.status(500).json({ error: 'Error al consultar la base de datos en Supabase' });
   }
 });
 
@@ -49,18 +48,27 @@ app.post('/api/vehiculos', async (req, res) => {
   }
 
   try {
-    const query = `
-      INSERT INTO vehiculos (placa, conductor, telefono, fecha_soat, foto)
-      VALUES (?, ?, ?, ?, ?)
-    `;
-    const [result] = await pool.query(query, [placa, conductor, telefono, fechaSoat, foto]);
+    const { data, error } = await supabase
+      .from('vehiculos')
+      .insert([
+        {
+          placa: placa,
+          conductor: conductor,
+          telefono: telefono,
+          fecha_soat: fechaSoat,
+          foto: foto
+        }
+      ])
+      .select();
+
+    if (error) throw error;
 
     res.status(201).json({
-      message: 'Vehículo registrado exitosamente',
-      id: result.insertId
+      message: 'Vehículo registrado exitosamente en Supabase',
+      id: data[0].id
     });
   } catch (error) {
-    console.error('Error POST:', error);
+    console.error('Error POST Supabase:', error);
     res.status(500).json({ error: 'Error al guardar el registro' });
   }
 });
@@ -70,23 +78,27 @@ app.delete('/api/vehiculos/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [result] = await pool.query('DELETE FROM vehiculos WHERE id = ?', [id]);
+    const { error } = await supabase
+      .from('vehiculos')
+      .delete()
+      .eq('id', id);
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'Registro no encontrado' });
-    }
+    if (error) throw error;
 
     res.json({ message: 'Vehículo eliminado correctamente' });
   } catch (error) {
-    console.error('Error DELETE:', error);
+    console.error('Error DELETE Supabase:', error);
     res.status(500).json({ error: 'Error al eliminar el registro' });
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en el puerto ${PORT}`);
-});
+// Si se ejecuta en local (con npm start), enciende el puerto 3000.
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor ejecutándose en local: http://localhost:${PORT}`);
+  });
+}
 
-
+// Exportar para que Vercel pueda usarlo en producción
 module.exports = app;
